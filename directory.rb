@@ -7,23 +7,26 @@ def input_students
     puts "Please enter the name of the student or hit return to exit."
     name = gets.chomp
 
-      break if name.empty?
+    break if name.empty?
 
-      puts "Please enter the cohort they are joining (November as default)"
-      cohort = gets.chomp
+    puts "Please enter the cohort they are joining (November as default)"
+    cohort = gets.chomp
 
-        puts "Please enter any hobbies"
-        hobbies = gets.chomp
+      if cohort.empty?
+        cohort = "November"
+      end
 
-        puts "Please enter country of birth"
-        birth = gets.chomp
+    puts "Please enter any hobbies"
+    hobbies = gets.chomp
 
-        puts "Please enter height (cm)"
-        height = gets.chomp
+    puts "Please enter country of birth"
+    birth = gets.chomp
 
-        puts "Please enter weight (kg)"
-        weight = gets.chomp
-  
+    puts "Please enter height (cm)"
+    height = gets.chomp
+
+    puts "Please enter weight (kg)"
+    weight = gets.chomp
 
   # while the name is not empty, repeat this code
     # add the student hash to array
