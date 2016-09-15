@@ -1,105 +1,84 @@
-def interactive_menu
-  students = []
-    loop do
-    # 1. Print the menu and ask the user what to do
-    puts "1. Input the students"
-    puts "2. Show the students"
-    puts "9. Exit"
-    # 2. read the input and save it to the variable
-    selection = gets.chomp
-    # 3. do what the use has asked
-    case selection
-    when "1"
-      students = input_students
-    when "2"
-      print_header
-      print_default(students)
-      print_footer(students)
-    when "9"
-      exit # this will cause the program to terminate
-    else
-      puts "I don't know what you meant, try again."
-    end
-  end
-end
+@students = []
 
 def input_students
-  # create an empty array
-  students = []
-
-  while true do
-
-    puts "Please enter the name of the student or hit return to exit."
-    name = gets.chomp
-
-    break if name.empty?
-
-    puts "Please enter the cohort they are joining (November as default)"
-    cohort = gets.chomp
-
-      if cohort.empty?
-        cohort = "November"
-      end
-
-    puts "Please enter any hobbies"
-    hobbies = gets.chomp
-
-    puts "Please enter country of birth"
-    birth = gets.chomp
-
-    puts "Please enter height (cm)"
-    height = gets.chomp
-
-    puts "Please enter weight (kg)"
-    weight = gets.chomp
-
+  puts "Please enter the names of the students"
+  puts "To finish, just hit return twice"
+  # get the first name
+  name = gets.chomp
   # while the name is not empty, repeat this code
-    # add the student hash to array
-    students << {name: name,
-      cohort: cohort,
-      hobbies: hobbies,
-      birth: birth,
-      height: height,
-      weight: weight}
-
-    puts plural_singular(students)
+  while !name.empty? do
+    # add the student hash to the array
+    @students << {name: name, cohort: :November}
+    puts "Now we have #{@students.count} students"
     # get another name from the user
     name = gets.chomp
   end
-    students
 end
+
+def interactive_menu
+    loop do
+    print_menu
+    process(gets.chomp)
+  end
+end
+
+def print_menu
+  puts "1. Input the students"
+  puts "2. Show the students"
+  puts "3. Save the list to students.csv"
+  puts "9. Exit"
+end
+
+def show_students
+  print_header
+  print_students_list
+  print_footer
+end
+
+def process(selection)
+  case selection
+  when "1"
+    input_students
+  when "2"
+    show_students
+  when "3"
+    save_students
+  when "9"
+    exit
+  else
+    puts "I don't know what you mean, try again"
+  end
+end
+
+def save_students
+  # open the file for writing
+  file = File.open("students.csv", "w")
+  # iterate over the array of students
+  @students.each do |student|
+    student_data = [student[:name], student[:cohort]]
+    csv_line = student_data.join(", ")
+    file.puts csv_line
+  end
+  file.close
+end
+
 
 def print_header
-puts "The students of Villain Academy"
-puts "-----------"
+  puts "The students of Villain Academy"
+  puts "-----------"
 end
 
-def print_default(students)
-  students.each_with_index do |student, index|
-    puts "#{index + 1}. #{student[:name]} (#{student[:cohort]} cohort),
-    born in #{student[:birth]}, currently #{student[:height]} cm tall, weighing #{student[:weight]} kg,
-    enjoys #{student[:hobbies]} as a hobby."
+def print_students_list
+  @students.each do |student|
+    puts "#{student[:name]} (#{student[:cohort]} cohort)"
   end
 end
 
-def plural_singular(students)
-  if students.count > 1
-    puts "Now we have #{students.count} students."
-  elsif students.count == 1
-    puts "Now we have #{students.count} student."
-  end
+def print_footer
+  puts "Overall we have #{@students.count} students"
 end
-
-def print_footer(students)
-  if students.count == 1
-    puts "Overall, we have #{students.count} great student"
-    else
-    puts "Overall, we have #{students.count} great students"
-  end
-end
-
 
 students = interactive_menu
 print_header
-print_default(students)
-print_footer(students)
+print_students_list
+print_footer
