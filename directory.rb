@@ -1,14 +1,21 @@
+require 'csv'
+
 @students = []
 
 def print_menu
+  puts
+  puts "Please select from the follow options:"
+  puts
   puts "1. Input the students"
   puts "2. Show the students"
   puts "3. Save the list to students.csv"
   puts "4. Load the list from students.csv"
   puts "9. Exit"
+  puts
 end
 
 def interactive_menu
+  try_load_students
   loop do
     print_menu
     process(STDIN.gets.chomp)
@@ -33,18 +40,50 @@ def process(selection)
 end
 
 def input_students
-  puts "Please enter the names of the students"
+  puts
+  puts "Please enter the name of the student"
   puts "To finish, just hit return twice"
   # get the first name
-  name = STDIN.gets.chomp
-  # while the name is not empty, repeat this code
-  while !name.empty? do
-    # add the student hash to the array
-    @students << {name: name, cohort: :November}
-    puts "Now we have #{@students.count} students"
-    # get another name from the user
-    name = STDIN.gets.chomp
+  while true
+    name = user_input("Students name? Double return to exit.")
+    break if name.empty? # allow an exit if the name is empty
+    cohort = user_input("Which cohort?(default November)", 'November')
+    # make sure all information input is correct
+    check_info(name, cohort)
   end
+end
+
+# require all the information from the user before progressing
+def user_input(question, default = '')
+  puts question
+  answer = STDIN.gets.chomp
+  if answer == ''
+    answer = default
+  end
+  answer
+end
+
+# method to make sure that all information is correct
+def check_info(name, cohort)
+  puts
+  puts "Is the below information correct?"
+  puts
+  puts "Name: #{name}"
+  puts "Cohort: #{cohort}"
+  puts
+  puts "If this is incorrect type 'no', else hit enter to carry on"
+  answer = STDIN.gets.chomp
+  if answer == 'no'
+    puts "Information deleted, please re-enter"
+  else
+    add_info({name: name.to_sym, cohort: cohort.to_sym})
+    puts "Information added"
+    puts "---------"
+  end
+end
+
+def add_info(info)
+  @students << info
 end
 
 def show_students
@@ -65,7 +104,11 @@ def print_student_list
 end
 
 def print_footer
-  puts "Overall we have #{@students.count} students"
+  if @students.count == 1
+    puts "Overall we have #{@students.count} student"
+  else
+    puts "Overall we have #{@students.count} students"
+  end
 end
 
 def save_students
@@ -84,7 +127,7 @@ def load_students(filename = "students.csv")
   file = File.open(filename, "r")
   file.readlines.each do |line|
   name, cohort = line.chomp.split(',')
-    @students << {name: name, cohort: cohort.to_sym}
+    add_info({name: name.to_sym, cohort: cohort.to_sym})
   end
   file.close
 end
@@ -104,3 +147,4 @@ end
 
 try_load_students
 interactive_menu
+print_cohorts
