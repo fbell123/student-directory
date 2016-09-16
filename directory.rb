@@ -112,25 +112,44 @@ def print_footer
 end
 
 def save_students
-  # open the file for writing
-  save_file = "students.csv"
-  CSV.open(save_file, "w") do |file|
+  puts "Please enter filename to save to: "
+  filename_save = STDIN.gets.chomp
+  if File.exists?(filename_save)
+  CSV.open(filename_save, "w") do |file|
     # iterate over the array of students
     @students.each do |student|
       student_data = [student[:name], student[:cohort]]
-      csv_line = student_data.join(",")
       file << student_data
     end
+  end
     puts "---Student saved---"
+  else
+    puts "That is not a file on the system, would you like to try another?"
+    puts "Enter yes or no (files on record are 'students.csv')."
+    new_save = STDIN.gets.chomp.downcase
+    if new_save == 'yes'
+      save_students
+    end
   end
 end
 
-def load_students(filename = 'students.csv')
-  CSV.foreach(filename) do |line|
-  name, cohort = line.join(',').split(',')
-    add_info({name: name.to_sym, cohort: cohort.to_sym})
-  end
-  puts "---'#{filename}' loaded---"
+def load_students
+  puts "Please enter the name and extension of the file you want to load."
+  filename = STDIN.gets.chomp
+  if File.exists?(filename)
+    CSV.foreach(filename) do |line|
+    name, cohort = line.join(',').split(',')
+      add_info({name: name.to_sym, cohort: cohort.to_sym})
+    end
+      puts "---'#{filename}' loaded---"
+    else
+      puts "That is not a file on the system, would you like to load another?"
+      puts "Enter yes or no (files on record are 'students.csv')."
+      answer = STDIN.gets.chomp.downcase
+        if answer == 'yes'
+          load_students
+        end
+    end
 end
 
 # method redundant now - load_students pulls through and works
