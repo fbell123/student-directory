@@ -15,7 +15,7 @@ def print_menu
 end
 
 def interactive_menu
-  try_load_students
+  load_students
   loop do
     print_menu
     process(STDIN.gets.chomp)
@@ -123,13 +123,11 @@ def save_students
   file.close
 end
 
-def load_students(filename = "students.csv")
-  file = File.open(filename, "r")
-  file.readlines.each do |line|
-  name, cohort = line.chomp.split(',')
+def load_students(filename = 'students.csv')
+  CSV.foreach(filename) do |line|
+  name, cohort = line.join(',').split(',')
     add_info({name: name.to_sym, cohort: cohort.to_sym})
   end
-  file.close
 end
 
 def try_load_students
