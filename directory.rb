@@ -113,14 +113,16 @@ end
 
 def save_students
   # open the file for writing
-  file = File.open("students.csv", "w")
-  # iterate over the array of students
-  @students.each do |student|
-    student_data = [student[:name], student[:cohort]]
-    csv_line = student_data.join(",")
-    file.puts csv_line
+  save_file = "students.csv"
+  CSV.open(save_file, "w") do |file|
+    # iterate over the array of students
+    @students.each do |student|
+      student_data = [student[:name], student[:cohort]]
+      csv_line = student_data.join(",")
+      file << student_data
+    end
+    puts "---Student saved---"
   end
-  file.close
 end
 
 def load_students(filename = 'students.csv')
@@ -128,8 +130,10 @@ def load_students(filename = 'students.csv')
   name, cohort = line.join(',').split(',')
     add_info({name: name.to_sym, cohort: cohort.to_sym})
   end
+  puts "---'#{filename}' loaded---"
 end
 
+# method redundant now - load_students pulls through and works
 def try_load_students
   filename = ARGV.first# first argument from the command line
   return if filename.nil? # get out of the method if it isn't given
